@@ -19,6 +19,7 @@ MPC::MPC(ros::NodeHandle *nh) {
   ros::param::get("~w_angular", this->w_angular_);
   ros::param::get("~w_waypoint", this->w_waypoint_);
   ros::param::get("~w_occupied", this->w_occupied_);
+  ros::param::get("~w_orientation", this->w_orientation_);
   ros::param::get("~horizon_length", this->horizon_length_); // How many steps in the future to look ahead
   ros::param::get("~frequency", frequency);
   ros::param::get("~min_distance_threshold", this->min_dist_thres_); // How close the robot must be to a targeted point
@@ -275,15 +276,25 @@ double MPC::calculate_cost_(Eigen::MatrixXd rollout) {
     cost += this->w_angular_ * (position(2) - robot_pos[2]) * (position(2) - robot_pos[2]);
 
     // waypoint- the distance between this position and a target point on the path (corrsponding to horizon step)
-    int path_cost_i = std::min(path_ind_ + i, (int)path_.size() - 1);
+    int path_cost_i = std::min(path_ind_, (int)path_.size() - 1);
     cost += this->w_waypoint_ *
             ((position(0) - path_[path_cost_i][0]) * (position(0) - path_[path_cost_i][0]) +
              (position(1) - path_[path_cost_i][1]) * (position(1) - path_[path_cost_i][1]));
 
     // occupied- If this position is an obstacle on the map
     cost += this->w_occupied_ * check_collision_(position);
+
+    // orientation- The angular difference between this position and a certain ways down the path
+    int lookahead = 2;
+    std::vector<double> lookahead_point = path_[std::min(path_cost_i + lookahead, (int)path_.size() - 1)];
+    double robot_angle = std::atan2(lookahead_point[1] - position(1), lookahead_point[0] - position(1));
+    double cosine_sim = std::fabs(std::cos(robot_angle - position(2)));
+
+    cost += this->w_orientation_ * (1 - cosine_sim) * (1/ (i + 1));
+
   }
 
+  ROS_INFO("Cost: %f angular %f", cost, rollout(0, MODEL_ANGULAR_VEL));
   return cost;
 }
 

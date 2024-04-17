@@ -24,8 +24,9 @@ nav:
         iterations: 10
         w_linear: 0.0
         w_angular: 0.0
-        w_waypoint: 20.0
+        w_waypoint: 0.0
         w_occupied: 0.0
+        w_orientation: 40.0
         horizon_length: 10
         frequency: 30
         min_distance_threshold: 0.5

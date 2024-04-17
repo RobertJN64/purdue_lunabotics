@@ -37,6 +37,7 @@ private:
   double w_angular_;
   double w_waypoint_;
   double w_occupied_;
+  double w_orientation_;
   double min_dist_thres_;
   int path_ind_;
   bool enabled_;
