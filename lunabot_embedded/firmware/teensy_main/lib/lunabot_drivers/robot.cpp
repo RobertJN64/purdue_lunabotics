@@ -73,6 +73,9 @@ void update(float &d0, float &d1, float &d2) {
 } // namespace uwb
 
 namespace load_cell {
+void init() {
+  LoadCells::init();
+}
 void update(float &weight) {
   weight = LoadCells::read_weight();
 }
