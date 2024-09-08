@@ -181,12 +181,21 @@ float AMT13_Angle_Bus::read_enc(uint8_t id) {
   return encs[id].read() / pulses_per_rev * deg_per_rev;
 }
 
+HX711 scale_a;
+HX711 scale_b;
 void LoadCells::init() {
-  // TODO RJN - this does nothing
+  scale_a.begin(SCALE_A_DOUT_PIN, SCALE_A_SCK_PIN);
+  scale_b.begin(SCALE_B_DOUT_PIN, SCALE_B_SCK_PIN);
+
+  scale_a.set_scale(SCALE_A_CALIBRATION);
+  scale_a.tare();
+
+  scale_b.set_scale(SCALE_B_CALIBRATION);
+  scale_b.tare();
 }
 
 float LoadCells::read_weight() {
-  return 0.0; // TODO RJN - this does nothing
+  return scale_a.get_units(3) + scale_b.get_units(3); // sum of 3 sample avg from each scale
 }
 
 volatile float M5Stack_UWB_Trncvr::recv_buffer_[NUM_UWB_TAGS] = {0};

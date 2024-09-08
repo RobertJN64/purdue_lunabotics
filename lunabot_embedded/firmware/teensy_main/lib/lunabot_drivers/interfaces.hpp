@@ -13,6 +13,13 @@
 
 #define UWBSerial Serial8
 
+#define SCALE_A_DOUT_PIN 0 // TODO - set pins
+#define SCALE_A_SCK_PIN 0
+#define SCALE_A_CALIBRATION -459.542 // https://randomnerdtutorials.com/arduino-load-cell-hx711/
+#define SCALE_B_DOUT_PIN 0
+#define SCALE_B_SCK_PIN 0
+#define SCALE_B_CALIBRATION -459.542
+
 enum MotorDir { CW = HIGH,
                 CCW = LOW };
 enum STMotor { M1 = 1,
