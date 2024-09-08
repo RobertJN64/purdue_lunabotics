@@ -7,7 +7,7 @@
 #include "interfaces.hpp"
 
 #define TX_PERIOD 10               // ms
-#define CTRL_PERIOD 2                // ms
+#define CTRL_PERIOD 2              // ms
 #define UWB_TRANSFER_PERIOD 10'000 // microsec
 #define CURR_UPDATE_PERIOD 8       // ms
 #define STALE_EFFORT_PERIOD 1000   // ms
@@ -36,6 +36,8 @@ void send() {
 
   uwb::update(state.uwb_dist_0, state.uwb_dist_1, state.uwb_dist_2);
 
+  load_cell::update(state.load_cell_weight);
+
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
   pb_encode(&stream, RobotSensors_fields, &state);
 }
@@ -44,10 +46,11 @@ IntervalTimer uwb_timer;
 float last_effort;
 
 void setup() {
-  Sabertooth_MotorCtrl::init_serial(ST_SERIAL, ST_BAUD_RATE);
+  // Sabertooth_MotorCtrl::init_serial(ST_SERIAL, ST_BAUD_RATE);
   ACS711_Current_Bus::init_ads1115();
   M5Stack_UWB_Trncvr::init();
   KillSwitchRelay::init();
+  load_cell::init();
 
   uwb_timer.begin(M5Stack_UWB_Trncvr::transfer, UWB_TRANSFER_PERIOD);
 
@@ -78,7 +81,7 @@ void loop() {
     pb_decode(&stream, RobotEffort_fields, &effort);
     last_effort = millis();
   }
-  
+
   if (millis() - last_effort > STALE_EFFORT_PERIOD) {
     effort = RobotEffort_init_zero;
   }
@@ -86,7 +89,7 @@ void loop() {
   if (ms_until_ctrl > CTRL_PERIOD) {
     ms_until_ctrl -= CTRL_PERIOD;
     // TODO, add timer if robot effort not changing for too long, exit?
-    //KillSwitchRelay::logic(effort);
+    // KillSwitchRelay::logic(effort);
     ctrl();
   }
 

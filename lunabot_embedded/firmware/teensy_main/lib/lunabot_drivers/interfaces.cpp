@@ -18,10 +18,10 @@ int Sabertooth_MotorCtrl::initialized_serial_ = 0;
 
 Sabertooth_MotorCtrl::Sabertooth_MotorCtrl(Sabertooth *s, STMotor m) : st_{s}, motor_{m} {}
 
-void Sabertooth_MotorCtrl::init_serial(HardwareSerial s, int baud_rate) {
-  s.begin(baud_rate);
-  initialized_serial_ = 1;
-}
+// void Sabertooth_MotorCtrl::init_serial(HardwareSerial s, int baud_rate) {
+//   s.begin(baud_rate);
+//   initialized_serial_ = 1;
+// }
 void Sabertooth_MotorCtrl::write(int8_t power) {
   if (initialized_serial_) {
     power = min(power, 127);
@@ -173,13 +173,20 @@ float VLH35_Angle_Bus::read_enc(uint8_t id) {
 }
 
 Encoder AMT13_Angle_Bus::encs[NUM_ENCODERS] = {
-      Encoder(PIN_LIST[0], PIN_LIST[1]),
-      Encoder(PIN_LIST[2], PIN_LIST[3]),
-      Encoder(PIN_LIST[4], PIN_LIST[5])
-};
+    Encoder(PIN_LIST[0], PIN_LIST[1]),
+    Encoder(PIN_LIST[2], PIN_LIST[3]),
+    Encoder(PIN_LIST[4], PIN_LIST[5])};
 
 float AMT13_Angle_Bus::read_enc(uint8_t id) {
-  return encs[id].read()/pulses_per_rev * deg_per_rev;
+  return encs[id].read() / pulses_per_rev * deg_per_rev;
+}
+
+void LoadCells::init() {
+  // TODO RJN - this does nothing
+}
+
+float LoadCells::read_weight() {
+  return 0.0; // TODO RJN - this does nothing
 }
 
 volatile float M5Stack_UWB_Trncvr::recv_buffer_[NUM_UWB_TAGS] = {0};
@@ -245,45 +252,44 @@ void M5Stack_UWB_Trncvr::transfer() {
 long KillSwitchRelay::kill_time;
 bool KillSwitchRelay::dead;
 
-void KillSwitchRelay::init() { 
-  pinMode(kill_pin, OUTPUT); 
+void KillSwitchRelay::init() {
+  pinMode(kill_pin, OUTPUT);
   KillSwitchRelay::dead = false;
   reset();
   KillSwitchRelay::kill_time = millis();
 }
 
-void KillSwitchRelay::reset() { 
-  digitalWrite(kill_pin, HIGH); 
+void KillSwitchRelay::reset() {
+  digitalWrite(kill_pin, HIGH);
   KillSwitchRelay::dead = false;
 }
 
-void KillSwitchRelay::kill() { 
+void KillSwitchRelay::kill() {
   digitalWrite(kill_pin, LOW);
   KillSwitchRelay::kill_time = millis();
   KillSwitchRelay::dead = true;
 }
 
-
 void KillSwitchRelay::disable_motor(int id, RobotEffort &effort) {
   switch (id) {
-    case 0:
-      effort.excavate = 0;
-      break;
-    case 1:
-      effort.deposit = 0;
-      break;
-    case 2:
-      effort.left_drive = 0;
-      break;
-    case 3:
-      effort.right_drive = 0;
-      break;
-    default:
-      return;
+  case 0:
+    effort.excavate = 0;
+    break;
+  case 1:
+    effort.deposit = 0;
+    break;
+  case 2:
+    effort.left_drive = 0;
+    break;
+  case 3:
+    effort.right_drive = 0;
+    break;
+  default:
+    return;
   }
 }
 
-//exc, dep, drive_L, drive_R
+// exc, dep, drive_L, drive_R
 volatile int KillSwitchRelay::cutoff_buffer[4] = {0};
 volatile int KillSwitchRelay::disable_counter[4] = {0};
 volatile bool KillSwitchRelay::is_disable[4] = {false};
@@ -293,7 +299,7 @@ void KillSwitchRelay::logic(RobotEffort &effort) {
   if (KillSwitchRelay::dead && millis() - KillSwitchRelay::kill_time >= relay_dead_time) {
     reset();
   } */
-  
+
   float exc_curr = ACS711_Current_Bus::adc_to_current_31A(excavation::update_curr());
   float dep_curr = ACS711_Current_Bus::adc_to_current_31A(deposition::update_curr());
   float drive_left_curr = ACS711_Current_Bus::adc_to_current_15A(drivetrain::update_curr_left());
@@ -314,7 +320,7 @@ void KillSwitchRelay::logic(RobotEffort &effort) {
 
   for (int i = 0; i < 4; ++i) {
     cutoff_buffer[i] -= cutoff_decay;
-    if (cutoff_buffer < 0) {
+    if (cutoff_buffer[i] < 0) {
       cutoff_buffer[i] = 0;
     }
     if (is_disable[i]) {
@@ -333,7 +339,7 @@ void KillSwitchRelay::logic(RobotEffort &effort) {
 
     if (disable_counter[i] >= kill_thresh) {
       disable_counter[i] = 0;
-      //TODO, send "all fucked" signal back to teensy
+      // TODO, send "all fucked" signal back to teensy
       kill();
     }
   }

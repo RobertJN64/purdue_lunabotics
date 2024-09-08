@@ -23,6 +23,7 @@ typedef struct _RobotSensors {
   float uwb_dist_0;
   float uwb_dist_1;
   float uwb_dist_2;
+  float load_cell_weight;
 } RobotSensors;
 
 typedef struct _RobotEffort {
@@ -38,14 +39,14 @@ extern "C" {
 #endif
 
 /* Initializer values for message structs */
-#define RobotSensors_init_default                                                                  \
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-#define RobotEffort_init_default                                                                   \
-  { 0, 0, 0, 0, 0 }
-#define RobotSensors_init_zero                                                                     \
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-#define RobotEffort_init_zero                                                                      \
-  { 0, 0, 0, 0, 0 }
+#define RobotSensors_init_default \
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define RobotEffort_init_default \
+  {0, 0, 0, 0, 0}
+#define RobotSensors_init_zero \
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define RobotEffort_init_zero \
+  {0, 0, 0, 0, 0}
 
 /* Field tags (for use in manual encoding/decoding) */
 #define RobotSensors_lead_screw_curr_tag 1
@@ -60,6 +61,7 @@ extern "C" {
 #define RobotSensors_uwb_dist_0_tag 10
 #define RobotSensors_uwb_dist_1_tag 11
 #define RobotSensors_uwb_dist_2_tag 12
+#define RobotSensors_load_cell_weight 13
 #define RobotEffort_lin_act_tag 1
 #define RobotEffort_left_drive_tag 2
 #define RobotEffort_right_drive_tag 3
@@ -67,27 +69,28 @@ extern "C" {
 #define RobotEffort_deposit_tag 5
 
 /* Struct field encoding specification for nanopb */
-#define RobotSensors_FIELDLIST(X, a)                                                               \
-  X(a, STATIC, SINGULAR, SINT32, lead_screw_curr, 1)                                               \
-  X(a, STATIC, SINGULAR, SINT32, act_right_curr, 2)                                                \
-  X(a, STATIC, SINGULAR, SINT32, dep_curr, 3)                                                      \
-  X(a, STATIC, SINGULAR, SINT32, exc_curr, 4)                                                      \
-  X(a, STATIC, SINGULAR, SINT32, drive_left_curr, 5)                                               \
-  X(a, STATIC, SINGULAR, SINT32, drive_right_curr, 6)                                              \
-  X(a, STATIC, SINGULAR, FLOAT, drive_left_ang, 7)                                                 \
-  X(a, STATIC, SINGULAR, FLOAT, drive_right_ang, 8)                                                \
-  X(a, STATIC, SINGULAR, FLOAT, exc_ang, 9)                                                        \
-  X(a, STATIC, SINGULAR, FLOAT, uwb_dist_0, 10)                                                    \
-  X(a, STATIC, SINGULAR, FLOAT, uwb_dist_1, 11)                                                    \
-  X(a, STATIC, SINGULAR, FLOAT, uwb_dist_2, 12)
+#define RobotSensors_FIELDLIST(X, a)                  \
+  X(a, STATIC, SINGULAR, SINT32, lead_screw_curr, 1)  \
+  X(a, STATIC, SINGULAR, SINT32, act_right_curr, 2)   \
+  X(a, STATIC, SINGULAR, SINT32, dep_curr, 3)         \
+  X(a, STATIC, SINGULAR, SINT32, exc_curr, 4)         \
+  X(a, STATIC, SINGULAR, SINT32, drive_left_curr, 5)  \
+  X(a, STATIC, SINGULAR, SINT32, drive_right_curr, 6) \
+  X(a, STATIC, SINGULAR, FLOAT, drive_left_ang, 7)    \
+  X(a, STATIC, SINGULAR, FLOAT, drive_right_ang, 8)   \
+  X(a, STATIC, SINGULAR, FLOAT, exc_ang, 9)           \
+  X(a, STATIC, SINGULAR, FLOAT, uwb_dist_0, 10)       \
+  X(a, STATIC, SINGULAR, FLOAT, uwb_dist_1, 11)       \
+  X(a, STATIC, SINGULAR, FLOAT, uwb_dist_1, 11)       \
+  X(a, STATIC, SINGULAR, FLOAT, load_cell_weight, 13)
 #define RobotSensors_CALLBACK NULL
 #define RobotSensors_DEFAULT NULL
 
-#define RobotEffort_FIELDLIST(X, a)                                                                \
-  X(a, STATIC, SINGULAR, SINT32, lin_act, 1)                                                       \
-  X(a, STATIC, SINGULAR, SINT32, left_drive, 2)                                                    \
-  X(a, STATIC, SINGULAR, SINT32, right_drive, 3)                                                   \
-  X(a, STATIC, SINGULAR, SINT32, excavate, 4)                                                      \
+#define RobotEffort_FIELDLIST(X, a)              \
+  X(a, STATIC, SINGULAR, SINT32, lin_act, 1)     \
+  X(a, STATIC, SINGULAR, SINT32, left_drive, 2)  \
+  X(a, STATIC, SINGULAR, SINT32, right_drive, 3) \
+  X(a, STATIC, SINGULAR, SINT32, excavate, 4)    \
   X(a, STATIC, SINGULAR, SINT32, deposit, 5)
 #define RobotEffort_CALLBACK NULL
 #define RobotEffort_DEFAULT NULL

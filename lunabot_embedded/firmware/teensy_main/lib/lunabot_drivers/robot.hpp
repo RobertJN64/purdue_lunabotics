@@ -33,6 +33,11 @@ namespace uwb {
 void update(float &d0, float &d1, float &d2);
 } // namespace uwb
 
+namespace load_cell {
+void init();
+void update(float &weight);
+} // namespace load_cell
+
 namespace deposition {
 void cb(int8_t dep);
 void update(int32_t &);

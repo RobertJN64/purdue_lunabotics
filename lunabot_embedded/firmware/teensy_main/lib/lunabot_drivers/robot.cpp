@@ -72,6 +72,12 @@ void update(float &d0, float &d1, float &d2) {
 }
 } // namespace uwb
 
+namespace load_cell {
+void update(float &weight) {
+  weight = LoadCells::read_weight();
+}
+} // namespace load_cell
+
 namespace excavation {
 Sabertooth_MotorCtrl exc_mtr{&MC2, STMotor::M1};
 
@@ -80,8 +86,8 @@ constexpr uint8_t EXC_CURR_MUX = 2; // U1 curr_sense_board
 
 constexpr uint8_t EXC_ENC_ID = 2;
 
-void update(int32_t &exc_curr, float &exc_angle) { 
-  exc_curr = ACS711_Current_Bus::read(EXC_CURR_ADC, EXC_CURR_MUX); 
+void update(int32_t &exc_curr, float &exc_angle) {
+  exc_curr = ACS711_Current_Bus::read(EXC_CURR_ADC, EXC_CURR_MUX);
   exc_angle = AMT13_Angle_Bus::read_enc(EXC_ENC_ID);
 }
 
@@ -92,17 +98,18 @@ void cb(int8_t speed) { exc_mtr.write(speed); }
 
 namespace deposition {
 Sabertooth_MotorCtrl dep_mtr{&MC3, STMotor::M1};
-//Sabertooth_MotorCtrl exc_mtr{&MC3, STMotor::M1};
+// Sabertooth_MotorCtrl exc_mtr{&MC3, STMotor::M1};
 
 constexpr uint8_t DEP_CURR_ADC = 0;
 constexpr uint8_t DEP_CURR_MUX = 3; // U3 curr_sense_board
 
 void update(int32_t &dep_curr) {
-  dep_curr = ACS711_Current_Bus::read(DEP_CURR_ADC, DEP_CURR_MUX); }
+  dep_curr = ACS711_Current_Bus::read(DEP_CURR_ADC, DEP_CURR_MUX);
+}
 
 float update_curr() { return ACS711_Current_Bus::read(DEP_CURR_ADC, DEP_CURR_MUX); }
 
 void cb(int8_t volt) { dep_mtr.write(-volt); }
-//exc_mtr.write(volt); }
+// exc_mtr.write(volt); }
 
 } // namespace deposition

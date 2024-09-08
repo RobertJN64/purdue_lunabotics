@@ -13,8 +13,10 @@
 
 #define UWBSerial Serial8
 
-enum MotorDir { CW = HIGH, CCW = LOW };
-enum STMotor { M1 = 1, M2 = 2 };
+enum MotorDir { CW = HIGH,
+                CCW = LOW };
+enum STMotor { M1 = 1,
+               M2 = 2 };
 
 class PWM_MotorCtrl {
 public:
@@ -42,7 +44,7 @@ private:
 
 class ACS711_Current_Bus {
 public:
-  ACS711_Current_Bus(){};
+  ACS711_Current_Bus() {};
   static void init_ads1115();
   static int16_t read(uint8_t bus, uint8_t mux);
   static void transfer();
@@ -65,7 +67,7 @@ private:
 
 class M5Stack_UWB_Trncvr {
 public:
-  M5Stack_UWB_Trncvr(){};
+  M5Stack_UWB_Trncvr() {};
   static void init();
   static float read_uwb(uint8_t id);
   static void transfer();
@@ -77,7 +79,7 @@ private:
 
 class VLH35_Angle_Bus {
 public:
-  VLH35_Angle_Bus(){};
+  VLH35_Angle_Bus() {};
   static void init();
   static float read_enc(uint8_t id);
   static void transfer();
@@ -102,37 +104,37 @@ public:
   static long kill_time;
 
   static void init();
-  
-  //these two functions deal with the relay that kills all power to the motors
+
+  // these two functions deal with the relay that kills all power to the motors
   static void reset();
   static void kill();
 
-  //the main loop, to be run before the effort values are assigned to motors
+  // the main loop, to be run before the effort values are assigned to motors
   static void logic(RobotEffort &effort);
 
-  //sets an individual motor to 0% power.
+  // sets an individual motor to 0% power.
   static void disable_motor(int id, RobotEffort &effort);
 
 private:
-  //the pin to cut power to all motors. Active low to kill
+  // the pin to cut power to all motors. Active low to kill
   static constexpr int kill_pin = 11;
   static constexpr float drive_kill_curr = 7.0;
   static constexpr float exdep_kill_curr = 25.0;
 
-  //the threshold at which the motor is set to 0% power 
+  // the threshold at which the motor is set to 0% power
   static constexpr int cutoff_thresh = 1000;
-  //the threshold at which a motor set a 0% power is allowed to turn back on
+  // the threshold at which a motor set a 0% power is allowed to turn back on
   static constexpr int reset_thresh = 500;
 
-  //Every cycle that a motor is overcurrent, a counter increases by this amount (as well as decreasing by cutoff_decay)
+  // Every cycle that a motor is overcurrent, a counter increases by this amount (as well as decreasing by cutoff_decay)
   static constexpr int cutoff_increase = 3;
-  //Every cycle, that counter decreases by this amount
+  // Every cycle, that counter decreases by this amount
   static constexpr int cutoff_decay = 1;
 
-  //The relay that kills all motors must be dead for at least this long before resetting
+  // The relay that kills all motors must be dead for at least this long before resetting
   static constexpr int relay_dead_time = 2000;
 
-  //If a motor has been set to 0% this many times, activate the kill relay. 
+  // If a motor has been set to 0% this many times, activate the kill relay.
   static constexpr int kill_thresh = 3;
 
   volatile static int cutoff_buffer[4];
@@ -142,16 +144,23 @@ private:
 
 class AMT13_Angle_Bus {
 public:
-  AMT13_Angle_Bus(){};
+  AMT13_Angle_Bus() {};
   static float read_enc(uint8_t id);
 
 private:
   static constexpr int NUM_ENCODERS = 3;
-  static constexpr int PIN_LIST[NUM_ENCODERS*2] = {4, 5, 6, 7, 8, 9};
-  static constexpr float pulses_per_rev = 800; //4 times the value set on the encoders
-  static constexpr float deg_per_rev = 360; //TODO, remove the deg2rad conversion and just to rad here
-   
+  static constexpr int PIN_LIST[NUM_ENCODERS * 2] = {4, 5, 6, 7, 8, 9};
+  static constexpr float pulses_per_rev = 800; // 4 times the value set on the encoders
+  static constexpr float deg_per_rev = 360;    // TODO, remove the deg2rad conversion and just to rad here
+
   static Encoder encs[NUM_ENCODERS];
+};
+
+class LoadCells {
+public:
+  LoadCells() {};
+  static void init();
+  static float read_weight();
 };
 
 #endif
