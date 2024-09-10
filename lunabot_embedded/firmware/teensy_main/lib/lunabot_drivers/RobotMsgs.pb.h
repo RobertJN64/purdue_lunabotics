@@ -81,7 +81,7 @@ extern "C" {
   X(a, STATIC, SINGULAR, FLOAT, exc_ang, 9)           \
   X(a, STATIC, SINGULAR, FLOAT, uwb_dist_0, 10)       \
   X(a, STATIC, SINGULAR, FLOAT, uwb_dist_1, 11)       \
-  X(a, STATIC, SINGULAR, FLOAT, uwb_dist_1, 11)       \
+  X(a, STATIC, SINGULAR, FLOAT, uwb_dist_1, 12)       \
   X(a, STATIC, SINGULAR, FLOAT, load_cell_weight, 13)
 #define RobotSensors_CALLBACK NULL
 #define RobotSensors_DEFAULT NULL
